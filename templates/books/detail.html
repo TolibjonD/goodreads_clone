@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %} The Book Detail {% endblock title %}
+{% load crispy_forms_tags %}
+
+{% comment %}
+ <input type="checkbox" class="btn-check" id="btn-check-outlined" autocomplete="off">
+<label class="btn btn-outline-primary" for="btn-check-outlined">Single toggle</label><br> 
+{% endcomment %}
+
+
+{% block content %}
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Rate this book</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+       <form action="{% url "books:reviews" book.id %}" method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+            
+            <div class="rating_system d-flex justify-content-center align-items-center flex-column">
+                <div>
+                    <span onclick="gfg(1)"
+                      class="rating_star">
+                      <i class="fa-solid fa-star"></i>
+                </span>
+                <span onclick="gfg(2)"
+                      class="rating_star">
+                      <i class="fa-solid fa-star"></i>
+                </span>
+                <span onclick="gfg(3)"
+                      class="rating_star">
+                      <i class="fa-solid fa-star"></i>
+                </span>
+                <span onclick="gfg(4)"
+                      class="rating_star">
+                      <i class="fa-solid fa-star"></i>
+                </span>
+                <span onclick="gfg(5)"
+                      class="rating_star">
+                      <i class="fa-solid fa-star"></i>
+                </span>
+                </div>
+                <h5 id="output">
+                      Rating is: 0/5
+                </h5>
+            </div>
+            {{ review_form|crispy }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Leave review</button>
+        </div>
+       </form>
+      </div>
+    </div>
+  </div>
+  
+
+<div class="row mx-auto mb-3">
+    <h2 class="mb-3">
+        {{ book.title }}
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            Give review <i class="fa-solid fa-comment" style="color: #ffffff;"></i>
+    </button>
+  
+    </h2>
+    <div class="col-md-2 mx-auto mb-2">
+        <div class="profile_picture_wrapper">
+            <img src="{{ book.cover_picture.url }}" alt="" class="profile_pic">
+        </div>
+        
+    </div>
+
+    <div class="col-md-10">
+        <p>
+            {% if book.bookauthor_set.count > 0 %}
+                <span class="fw-bold text-warning">
+                    Authorized by 
+                </span> 
+                <span class="fst-italic text-info">
+                {% for author in book.bookauthor_set.all %}
+                    {% if forloop.last %}
+                        {{author.author.full_name}} .
+                    {% else %}
+                        {{author.author.full_name}} , 
+                    {% endif %}
+                {% endfor %}
+                </span>
+            {% else %}
+
+            {% endif %}
+        </p>
+        <p> {{ book.description }}</p>
+    </div>
+</div>
+{% if book.reviews.exists %}
+<h4 >Reviews</h4> <hr>
+{% if reviews %}
+{% for review in reviews %}
+<div class="row mb-2" id="{{ review.id }}">
+    <div class="col-xl-1 col-2">
+        <div class="profile_picture_wrapper_small">
+            <img class="profile_pic" src="{{ review.user.profile_picture.url }}" alt="">
+        </div>
+    </div>
+    <div class="col-xl-11 col-10">
+        <p>
+            <b>{{ review.user.username }}</b>
+            rated with 
+            <span class="bg-light rounded user-select-none">
+                {% for star in review.stars_given %}
+                    <i class="fa-solid fa-star fa-2xs" style="color: #f28b16"></i> 
+                {% endfor %}
+            </span>
+            <span class="ms-3 fw_leight">
+                {{ review.created_at|date:"M. d, Y | H:i" }}
+            </span>
+            {% if request.user == review.user %}
+                <a href="{% url "books:review_edit" book.id review.id %}"><i class="fa-solid fa-pen text-info"></i></a>
+                <a href="{% url "books:review_delete_confirm" book.id review.id %}"><i class="fa-solid fa-trash text-danger"></i>
+                </a>
+                {% endif %}
+        </p>
+        <span class="text-secondary comment">
+            {{ review.comment }}
+        </span>
+        <span class="comment_more text-warning">
+            show more...
+        </span>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+{% endif %}
+
+<script>
+    // rating system beginning
+     
+// To access the stars
+let rating_stars = document.getElementsByClassName("rating_star");
+let output = document.getElementById("output");
+// Funtion to update rating
+function gfg(n) {
+remove();
+for (let i = 0; i < n; i++) {
+    if (n == 1) cls = "one";
+    else if (n == 2) cls = "two";
+    else if (n == 3) cls = "three";
+    else if (n == 4) cls = "four";
+    else if (n == 5) cls = "five";
+    rating_stars[i].className = "rating_star " + cls;
+    
+}
+output.innerText = "Rating is: " + n + "/5";
+document.getElementById("stars_given").value = n;
+}
+
+// To remove the pre-applied styling
+function remove() {
+let i = 0;
+while (i < 5) {
+    rating_stars[i].className = "rating_star";
+    i++;
+}
+}
+
+// rating system ending
+</script>
+
+{% endblock content %}

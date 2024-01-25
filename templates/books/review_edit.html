@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %} Review edit {% endblock title %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h1>Edit Review</h1>
+
+<form  method="post">
+    <div class="rating_system d-flex justify-content-center align-items-center flex-column">
+        <div>
+            <span onclick="gfg(1)"
+              class="rating_star">
+              <i class="fa-solid fa-star"></i>
+        </span>
+        <span onclick="gfg(2)"
+              class="rating_star">
+              <i class="fa-solid fa-star"></i>
+        </span>
+        <span onclick="gfg(3)"
+              class="rating_star">
+              <i class="fa-solid fa-star"></i>
+        </span>
+        <span onclick="gfg(4)"
+              class="rating_star">
+              <i class="fa-solid fa-star"></i>
+        </span>
+        <span onclick="gfg(5)"
+              class="rating_star">
+              <i class="fa-solid fa-star"></i>
+        </span>
+        </div>
+        <h5 id="output">
+              Rating is: 0/5
+        </h5>
+    </div>
+    {% csrf_token %}
+    {{ form| crispy }}
+
+    <button type="submit" class="btn btn-outline-info mt-3">Submit</button>
+    <a href="{% url "books:gotoreview" book.id review.id %}" class="btn btn-outline-success mt-3">Cancel</a>
+</form>
+
+
+
+
+
+<script>
+    // rating system beginning
+     
+// To access the stars
+let rating_stars = document.getElementsByClassName("rating_star");
+let output = document.getElementById("output");
+// Funtion to update rating
+function gfg(n) {
+remove();
+for (let i = 0; i < n; i++) {
+    if (n == 1) cls = "one";
+    else if (n == 2) cls = "two";
+    else if (n == 3) cls = "three";
+    else if (n == 4) cls = "four";
+    else if (n == 5) cls = "five";
+    rating_stars[i].className = "rating_star " + cls;
+    
+}
+output.innerText = "Rating is: " + n + "/5";
+document.getElementById("stars_given").value = n;
+}
+
+// To remove the pre-applied styling
+function remove() {
+let i = 0;
+while (i < 5) {
+    rating_stars[i].className = "rating_star";
+    i++;
+}
+}
+
+// rating system ending
+</script>
+{% endblock content %}

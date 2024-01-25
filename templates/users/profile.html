@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %} Profile {% endblock title %}
+
+{% block content %}
+
+<div class="image d-flex flex-column justify-content-center align-items-center">
+    <div class="profile_picture_wrapper">
+        <div class="overlay">
+            <p> @{{ user.username }} </p>
+        </div>
+        <img src="{{ user.profile_picture.url }}" alt="Profile picture" class="profile_pic" >
+    </div>
+    <span class="name mt-3"> {{ user.first_name }} {{ user.last_name }} </span>
+    <span class="idd"> @{{ user.username }} </span>
+    <span> {{user.email }} </span>
+    <div class="px-2 rounded mt-4 date">
+        <span class="join"> Joined {{ user.date_joined | date:"M d, Y" }} </span>
+    </div>
+    <a href="{% url "users:profile_update" %}" class="btn btn-secondary mt-3">Edit profile</a>
+    <div>
+</div>
+
+{% endblock content %}

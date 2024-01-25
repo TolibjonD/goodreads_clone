@@ -1,0 +1,50 @@
+{% url "home_page" as home_page_url %}
+{% url "books:books" as books_list_url %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url "landing_page" %}"><i class="fab fa-twitter fa-xl" style="color: #71a5f4;"></i></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == home_page_url %} active {% endif %}" aria-current="page" href="{% url "home_page" %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == books_list_url %} active {% endif %}" aria-current="page" href="{% url "books:books" %}">Books</a>
+          </li>
+        </ul>
+
+        <div class="div">
+          {% if request.user.is_authenticated %}
+
+          <li class="nav-item dropdown ">
+            <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ request.user.username }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="{% url "users:profile" %}">Profile</a></li>
+              <li><hr class="dropdown-divider bg-secondary"></li>
+              <li><a class="dropdown-item" href="{% url "users:logout" %}">Logout</a></li>
+            </ul>
+          </li>
+
+          {% else %}
+          <a href="{% url "users:login" %}" class="btn btn-outline-primary">Login</a>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </nav>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %} Home Page {% endblock title %}
+{% load static %}
+
+{% block content %}
+{% if reviews %}
+
+<div class="mb-2 mt-5 review_container">
+    {% for review in reviews %}
+
+<div class="card">
+    <div class="card-body py-4 mt-2">
+      <div class="d-flex justify-content-center mb-4">
+        <img src="{{ review.user.profile_picture.url }}"
+          class="rounded-circle border p-1" width="100" height="100" />
+      </div>
+      <h5 class="fw-bold text-center"> {{ review.user.username }} </h5>
+      <h6 class="my-3 text-center"> {{review.user.get_full_name}} </h6>
+      <ul class="list-unstyled d-flex justify-content-center">
+        {% for star in review.stars_given %}
+        <li>
+            <i class="fas fa-star fa-sm text-warning"></i>
+        </li>
+        {% endfor %}
+      </ul>
+      <p class="mb-2 text-center bg-light rounded">
+        <i class="fas fa-quote-left pe-2 fs-5 text-warning"></i>
+        <span class="text-muted">{{ review.comment| truncatechars:90 }}</span>
+        <i class="fas fa-quote-right ps-2 fs-5 text-warning"></i>
+      </p>
+    </div>
+    <div class="row mx-auto mb-1">
+        <div class="col col-2 mx-auto profile_picture_wrapper_tiny ">
+            <img src="{{ review.book.cover_picture.url }}" alt="" class="profile_pic ">
+        </div>
+        <div class="col col-10">
+            <a href="{% url "books:detail" review.book.id %}" class="small_text text-info">
+                {{ review.book.title|truncatechars:60 }} 
+            </a>
+        </div>
+      </div>
+  </div>
+
+{% endfor %}
+</div>
+<!-- PAGINATION BEGINNING -->
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {% if reviews.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="{% url "home_page" %}?page=1">first</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="{% url "home_page" %}?page={{ reviews.previous_page_number }}" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        {% endif %}
+        <li class="page-item active"><a class="page-link">{{ reviews.number }}</a></li>
+        {% if reviews.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{% url "home_page" %}?page={{ reviews.next_page_number }}" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        <li class="page-item">
+            <a class="page-link" href="{% url "home_page" %}?page={{ reviews.paginator.num_pages }}">last</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        {% endif %} 
+    </ul>
+  </nav>
+  <!-- ! PAGINATION ENDING -->
+{% else %}
+<p>No reviews found</p>
+{% endif %}
+{% endblock content %}
